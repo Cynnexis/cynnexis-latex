@@ -42,13 +42,5 @@ cd /root/.fonts
 wget -qO- http://plasmasturm.org/code/vistafonts-installer/vistafonts-installer | bash
 cd ~
 
-# Install some LaTeX packages using the LaTeX packages manager
-# cd ~
-# mkdir texmf
-# tlmgr init-usertree
-# tlmgr update --all
-# tlmgr install pgf
-# tlmgr install tikz-cd
-
 ENDTIME=$(date +%s)
 echo "Time for installation: $(($ENDTIME - $STARTTIME)) seconds"
