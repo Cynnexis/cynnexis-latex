@@ -5,22 +5,22 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-18.04
-    name: Build the Docker image from the Dockerfile.
+    name: Build the Docker image and send them to registries
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Publish to Docker Hub
+      - name: Build and push Docker image to Docker Hub
         uses: docker/build-push-action@v1
         with:
           repository: cynnexis/latex
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           tags: latest
-      - name: Publish to GitHub Registry
+      - name: Tag Docker image for GitHub Packages
+        run: docker tag cynnexis/latex docker.pkg.github.com/cynnexis/cynnexis-latex/cynnexis/latex:latest
+      - name: Publish to Docker Hub
         uses: docker/build-push-action@v1
         with:
-          repository: docker.pkg.github.com/cynnexis/cynnexis-latex/cynnexis/latex:latest
-          username: ${{ secrets.GIT_HUB_USERNAME }}
-          password: ${{ secrets.GIT_HUB_PASSWORD }}
-          registry: docker.pkg.github.com
+          repository: docker.pkg.github.com/cynnexis/cynnexis-latex/cynnexis/latex
           tags: latest
+          registry: docker.pkg.github.com
