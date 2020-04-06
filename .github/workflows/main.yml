@@ -18,5 +18,6 @@ jobs:
           tags: latest
       - name: Push Docker image to GitHub Packages
         run: |
+          echo ${{ secrets.GIT_HUB_PASSWORD }} | docker login docker.pkg.github.com -u ${{ secrets.GIT_HUB_USERNAME }} --password-stdin
           docker tag cynnexis/latex docker.pkg.github.com/cynnexis/cynnexis-latex/cynnexis/latex:latest
           docker push docker.pkg.github.com/cynnexis/cynnexis-latex/cynnexis/latex:latest
