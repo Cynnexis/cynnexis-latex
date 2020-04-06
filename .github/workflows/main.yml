@@ -16,15 +16,19 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           tags: latest
-      - name: Tag Docker image for GitHub Packages
-        run: docker tag cynnexis/latex docker.pkg.github.com/cynnexis/cynnexis-latex/latex:latest
+      # - name: Tag Docker image for GitHub Packages
+      #   run: docker tag cynnexis/latex docker.pkg.github.com/cynnexis/cynnexis-latex/latex:latest
+      # - name: Push Docker image to GitHub Packages
+      #   uses: docker/build-push-action@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     repository: docker.pkg.github.com/cynnexis/cynnexis-latex/latex
+      #     username: ${{ secrets.GIT_HUB_USERNAME }}
+      #     password: ${{ secrets.GIT_HUB_PASSWORD }}
+      #     registry: docker.pkg.github.com
       - name: Push Docker image to GitHub Packages
-        uses: docker/build-push-action@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          repository: docker.pkg.github.com/cynnexis/cynnexis-latex/latex
-          username: ${{ secrets.GIT_HUB_USERNAME }}
-          password: ${{ secrets.GIT_HUB_PASSWORD }}
-          tags: latest
-          registry: docker.pkg.github.com
+        run: |
+          echo ${{ secrets.GIT_HUB_PASSWORD }} | docker login docker.pkg.github.com -u ${{ secrets.GIT_HUB_USERNAME }} --password-stdin
+          docker tag cynnexis/latex docker.pkg.github.com/cynnexis/cynnexis-latex/latex:latest
+          docker push docker.pkg.github.com/cynnexis/cynnexis-latex/latex:latest
