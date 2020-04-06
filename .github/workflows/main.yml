@@ -17,11 +17,11 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           tags: latest
       - name: Tag Docker image for GitHub Packages
-        run: docker tag cynnexis/latex docker.pkg.github.com/cynnexis/cynnexis-latex/cynnexis-latex:latest
+        run: docker tag cynnexis/latex docker.pkg.github.com/cynnexis/cynnexis-latex/cynnexis_latex:latest
       - name: Push Docker image to GitHub Packages
         uses: docker/build-push-action@v1
         with:
-          repository: docker.pkg.github.com/cynnexis/cynnexis-latex/cynnexis-latex
+          repository: docker.pkg.github.com/cynnexis/cynnexis-latex/cynnexis_latex
           username: ${{ secrets.GIT_HUB_USERNAME }}
           password: ${{ secrets.GIT_HUB_PASSWORD }}
           tags: latest
