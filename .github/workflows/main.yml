@@ -19,7 +19,7 @@ jobs:
       - name: Publish to GitHub Registry
         uses: docker/build-push-action@v1
         with:
-          repository: cynnexis/latex
+          repository: docker.pkg.github.com/cynnexis/cynnexis-latex/cynnexis/latex:latest
           username: ${{ secrets.GIT_HUB_USERNAME }}
           password: ${{ secrets.GIT_HUB_PASSWORD }}
           registry: docker.pkg.github.com
