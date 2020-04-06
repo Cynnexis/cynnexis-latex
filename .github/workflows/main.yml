@@ -16,6 +16,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           dockerfile: Dockerfile
+          tagging: true
       - name: Publish to GitHub Registry
         uses: HurricanKai/Publish-Docker-Github-Action@master
         with:
@@ -24,3 +25,4 @@ jobs:
           password: ${{ secrets.GIT_HUB_PASSWORD }}
           dockerfile: Dockerfile
           registry: docker.pkg.github.com
+          tagging: true
