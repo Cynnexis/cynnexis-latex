@@ -1,5 +1,4 @@
 FROM ubuntu:18.04
-MAINTAINER Valentin Berger
 LABEL maintainer="Valentin Berger"
 
 USER root
@@ -66,5 +65,10 @@ RUN apt-get install -y cabextract && \
 	cd /root/.fonts && \
 	wget -qO- http://plasmasturm.org/code/vistafonts-installer/vistafonts-installer | bash && \
 	cd ~
+
+# Setup TLMGR
+RUN tlmgr init-usertree ; \
+	tlmgr option repository ftp://tug.org/historic/systems/texlive/2017/tlnet-final && \
+	tlmgr update --all
 
 EXPOSE 3389 8080
