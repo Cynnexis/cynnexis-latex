@@ -48,7 +48,7 @@ RUN apt-get install -y \
 	xfonts-jmk \
 	xfonts-terminus
 
-COPY tlmgr-install-packages.txt texlive.profile /tmp/
+COPY texlive.profile /tmp/
 
 # Install LaTeX
 RUN mkdir -p /tmp/install-latex/ && \
