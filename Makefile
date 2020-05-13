@@ -3,7 +3,7 @@ DOCKER_IMAGE=cynnexis/latex
 
 all: build
 
-clean:
+clear:
 	docker rmi -f $$(docker images -f "reference=$(DOCKER_IMAGE)" -q)
 
 build:
@@ -13,7 +13,7 @@ build-nc:
 	docker build --no-cache -t $(DOCKER_IMAGE) .
 
 run:
-	docker run --rm -it $(DOCKER_IMAGE)
+	docker run --rm -it $(DOCKER_IMAGE) bash
 
 stop:
 	docker stop $(DOCKER_IMAGE); docker rm $(DOCKER_IMAGE)

@@ -1,5 +1,8 @@
-# Created by https://www.gitignore.io/api/visualstudiocode
-# Edit at https://www.gitignore.io/?templates=visualstudiocode
+# Created by https://www.gitignore.io/api/dotenv,visualstudiocode
+# Edit at https://www.gitignore.io/?templates=dotenv,visualstudiocode
+
+### dotenv ###
+.env
 
 ### VisualStudioCode ###
 .vscode/*
@@ -12,8 +15,9 @@
 # Ignore all local history of files
 .history
 
-# End of https://www.gitignore.io/api/visualstudiocode
+# End of https://www.gitignore.io/api/dotenv,visualstudiocode
 
 cache/
 cache.ignore/
 *.code-workspace
+texlive-cache/
