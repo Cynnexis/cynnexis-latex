@@ -2,4 +2,6 @@
 .gitignore
 .dockerignore
 docker-compose.yml
-cache.ignore
+Makefile
+*.code-workspace
+texlive-cache

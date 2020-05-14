@@ -13,7 +13,7 @@ RUN apt-get update -y && \
 RUN apt-get upgrade -y
 
 # Install basic Linux programs
-RUN apt-get install -y build-essential wget curl xzdec zip unzip perl
+RUN apt-get install -y build-essential wget curl xzdec zip unzip perl dos2unix
 
 # Install fonts
 RUN apt-get install -y \
@@ -48,25 +48,12 @@ RUN apt-get install -y \
 	xfonts-jmk \
 	xfonts-terminus
 
-COPY texlive.profile /tmp/
+COPY install-texlive.sh texlive.profile /tmp/
 
 # Install LaTeX
-RUN mkdir -p /tmp/install-latex/ && \
-	cd /tmp/install-latex/ && \
-	url="" && \
-	curl -L -o install-tl-unx.tar.gz http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz && \
-	mkdir installation-folder && \
-	tar -xzf install-tl-unx.tar.gz -C installation-folder --strip-components 1 && \
-	cd installation-folder && \
-	if [ -z "$CTAN_MIRROR" ]; then \
-		echo i | perl install-tl --profile=/tmp/texlive.profile; \
-	else \
-		echo i | perl install-tl --profile=/tmp/texlive.profile -- location $CTAN_MIRROR; \
-	fi && \
-	cd ~ && \
-	rm -rf /tmp/install-latex/* && \
-	rm -f /tmp/texlive.profile && \
-	echo 'PATH=/usr/local/texlive/2020/bin/x86_64-linux:$PATH' >> ~/.bashrc
+RUN dos2unix /tmp/install-texlive.sh && \
+	chmod a+x /tmp/install-texlive.sh && \
+	. /tmp/install-texlive.sh
 
 ENV PATH="/usr/local/texlive/2020/bin/x86_64-linux:${PATH}"
 
