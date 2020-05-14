@@ -13,7 +13,7 @@ RUN apt-get update -y && \
 RUN apt-get upgrade -y
 
 # Install basic Linux programs
-RUN apt-get install -y build-essential wget curl xzdec zip unzip
+RUN apt-get install -y build-essential wget curl xzdec zip unzip perl dos2unix
 
 # Install fonts
 RUN apt-get install -y \
@@ -48,13 +48,14 @@ RUN apt-get install -y \
 	xfonts-jmk \
 	xfonts-terminus
 
+COPY install-texlive.sh texlive.profile /tmp/
+
 # Install LaTeX
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y \
-	texlive \
-	texlive-full \
-	texlive-lang-all \
-	texlive-latex-extra \
-	texlive-pictures
+RUN dos2unix /tmp/install-texlive.sh && \
+	chmod a+x /tmp/install-texlive.sh && \
+	. /tmp/install-texlive.sh
+
+ENV PATH="/usr/local/texlive/2020/bin/x86_64-linux:${PATH}"
 
 # Install LaTeX dependencies (with vim)
 RUN apt-get install -y python-pygments gnuplot vim vim-latexsuite
@@ -66,9 +67,9 @@ RUN apt-get install -y cabextract && \
 	wget -qO- http://plasmasturm.org/code/vistafonts-installer/vistafonts-installer | bash && \
 	cd ~
 
-# Setup TLMGR
-RUN tlmgr init-usertree ; \
-	tlmgr option repository ftp://tug.org/historic/systems/texlive/2017/tlnet-final && \
+# Setup TLMGR & install packages
+RUN tlmgr init-usertree && \
+	if [ ! -z "$CTAN_MIRROR" ]; then tlmgr option repository $CTAN_MIRROR; fi && \
 	tlmgr update --all
 
 EXPOSE 3389 8080
