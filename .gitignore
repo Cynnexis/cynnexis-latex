@@ -21,3 +21,5 @@ cache/
 cache.ignore/
 *.code-workspace
 texlive-cache/
+find-best-CTAN-mirror?.sh
+./texlive.profile

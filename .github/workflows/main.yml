@@ -1,11 +1,15 @@
 name: cynnexis/latex CI/CD
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+      - 'cicd/**'
 
 jobs:
   build:
     runs-on: ubuntu-18.04
-    name: Build the Docker image and send them to registries
+    name: Build the Docker image and send it to Docker Hub
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -16,3 +20,20 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           tags: latest
+  
+  release:
+    runs-on: ubuntu-18.04
+    name: Create a release
+    needs: [build]
+    steps:
+      - name: Create a release for the Docker image
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.sha }}
+          release_name: ${{ github.sha }}
+          body: "Ref: ${{ github.ref }} SHA: ${{ github.sha }}"
+          draft: true
+          prerelease: false
