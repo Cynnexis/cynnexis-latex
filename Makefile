@@ -1,6 +1,10 @@
 # Makefile based on https://gist.github.com/mpneuried/0594963ad38e68917ef189b4e6a269db
 SHELL := /bin/bash
 DOCKER_IMAGE=cynnexis/latex
+ifneq (,$(wildcard ./.env))
+	include .env
+	export $(shell sed 's/=.*//' .env)
+endif
 
 .PHONY: help clear build build-nc run-it
 
