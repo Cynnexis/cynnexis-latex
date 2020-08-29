@@ -6,7 +6,7 @@ ifneq (,$(wildcard ./.env))
 	export $(shell sed 's/=.*//' .env)
 endif
 
-.PHONY: help clear build build-nc run-it
+.PHONY: help clear build build-nc run-it test
 
 help:
 	@echo "Makefile for cynnexis/latex"
@@ -42,3 +42,9 @@ build:
 
 run-it:
 	docker run --rm -it $(DOCKER_IMAGE) bash
+
+test:
+	cd test/ && $(SHELL) test.sh
+
+%.pdf: %.tex $(TEX_DEPENDENCIES)
+	docker run --rm --name compile-latex-document -v "$$(pwd):/root/latex" $(DOCKER_IMAGE) pdflatex -shell-escape -halt-on-error -file-line-error -output-directory "/root/latex/$(dir $<)" "/root/latex/$<"
