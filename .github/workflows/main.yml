@@ -22,11 +22,13 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           tags: latest
+      - name: Test the Docker image
+        run: make test
   
   release:
     runs-on: ubuntu-18.04
     name: Create a release
-    needs: [build]
+    needs: build
     steps:
       - name: Create a release for the Docker image
         id: create_release
