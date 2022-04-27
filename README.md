@@ -1,4 +1,4 @@
-# cynnexis/latex
+# :bookmark_tabs: cynnexis/latex
 
 [![Project Release](https://img.shields.io/github/release/Cynnexis/cynnexis-latex.svg?logo=github)][project-release]
 [![repo size](https://img.shields.io/github/repo-size/Cynnexis/cynnexis-latex)][project-release]
@@ -11,13 +11,13 @@ Docker image containing latex & fonts apt packages, based on the [ubuntu image](
 
 [![Docker Hub](https://img.shields.io/badge/docker%20hub-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)][dockerhub-link]
 
-## Download from the Docker Hub
+## :whale: Download from the Docker Hub
 
 ```bash
 docker pull cynnexis/latex
 ```
 
-## Build
+## :hammer_and_pick: Build
 
 ```bash
 git clone https://github.com/Cynnexis/cynnexis-latex.git
@@ -33,7 +33,7 @@ make build CTAN_MIRROR=https://mirrors.ircam.fr/pub/CTAN/systems/texlive/tlnet/
 
 To know which mirror is best for you, you can either ignore the `CTAN_MIRROR` argument (thus the TeX Live installer will automatically choose the best mirror for you), or you can use this [bash scrip](https://gist.github.com/Cynnexis/1b9ce548f1d74bbff9fb13d6c89de268) to take the best mirror according to the ping.
 
-### Modifying the Dockerfile
+### :pencil: Modifying the Dockerfile
 
 Compiling the Dockerfile can take a lot of time, because of all the packages to download.
 One way to reduce this time is to download all the packages only once using the `-d` option with apt-get, then collect all downloaded packages, save them on the host machine, and finally copy all packages to the container when compiling the image.
@@ -61,7 +61,7 @@ To achieve this, follow those steps:
 
 Now, your build should be faster.
 
-## Run
+## :arrow_forward: Run
 
 In iteractive mode:
 
@@ -75,7 +75,7 @@ With a volume (the folder `./latex` in the host):
 docker run -it -v ./latex:/latex cynnexis/latex bash
 ```
 
-## Example
+## :pencil2: Example
 
 Example of `Dockerfile` with the [LNCS](https://www.springer.com/gp/computer-science/lncs/conference-proceedings-guidelines) template and building a LaTeX file:
 
@@ -98,7 +98,7 @@ COPY . .
 CMD [ "bash", "-c", "DEBIAN_FRONTEND=noninteractive pdflatex -shell-escape -halt-on-error /latex/my-latex.tex" ]
 ```
 
-## Built with
+## :building_construction: Built with
 
 [![LaTeX](https://img.shields.io/badge/LaTeX-47A141?style=for-the-badge&logo=LaTeX&logoColor=white)](https://www.latex-project.org/get/)
 [![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
