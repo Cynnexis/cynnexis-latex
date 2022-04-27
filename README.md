@@ -1,10 +1,15 @@
 # cynnexis/latex
 
+[![Project Release](https://img.shields.io/github/release/Cynnexis/cynnexis-latex.svg?logo=github)][project-release]
+[![repo size](https://img.shields.io/github/repo-size/Cynnexis/cynnexis-latex)][project-release]
+[![total release download](https://img.shields.io/github/downloads/Cynnexis/cynnexis-latex/total)][project-release]
+[![license](https://img.shields.io/github/license/Cynnexis/cynnexis-latex)](LICENSE)
+
 Docker image containing latex & fonts apt packages, based on the [ubuntu image](https://hub.docker.com/_/ubuntu).
 
-[Github][github-link]
+[![Github repo](https://img.shields.io/badge/GitHub%20repo-100000?style=for-the-badge&logo=github&logoColor=white)][github-link]
 
-[Docker Hub][dockerhub-link]
+[![Docker Hub](https://img.shields.io/badge/docker%20hub-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)][dockerhub-link]
 
 ## Download from the Docker Hub
 
@@ -93,5 +98,33 @@ COPY . .
 CMD [ "bash", "-c", "DEBIAN_FRONTEND=noninteractive pdflatex -shell-escape -halt-on-error /latex/my-latex.tex" ]
 ```
 
+## Built with
+
+[![LaTeX](https://img.shields.io/badge/LaTeX-47A141?style=for-the-badge&logo=LaTeX&logoColor=white)](https://www.latex-project.org/get/)
+[![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white)](https://git-scm.com/)
+[![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/)
+[![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/features/actions)
+
+## :handshake: Contributing
+
+To contribute to this project, please read our [`CONTRIBUTING.md`][contributing] file.
+
+We also have a [code of conduct][code-of-conduct] to help create a welcoming and friendly environment.
+
+## :writing_hand: Authors
+
+Please see the [`CONTRIBUTORS.md`][contributors] file.
+
+## :page_facing_up: License
+
+This project is under the MIT License. Please see the [LICENSE][license] file for more detail (it's a really fascinating story written in there!).
+
 [github-link]: https://github.com/Cynnexis/cynnexis-latex
+[project-release]: https://github.com/Cynnexis/cynnexis-latex/releases
 [dockerhub-link]: https://hub.docker.com/r/cynnexis/latex
+[cynnexis]: https://github.com/Cynnexis
+[contributing]: CONTRIBUTING.md
+[contributors]: CONTRIBUTORS.md
+[code-of-conduct]: CODE_OF_CONDUCT.md
+[license]: LICENSE
