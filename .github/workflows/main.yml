@@ -44,7 +44,7 @@ jobs:
         id: build_push
         uses: docker/build-push-action@v2
         with:
-          tags: cynnexis/latex:latest,cynnexis/latex:${{ env.app_version }}
+          tags: cynnexis/latex:latest,cynnexis/latex:${{ env.project_version }}
           push: true
           platforms: ${{ steps.buildx.outputs.platforms }}
       - name: Inspect built image
@@ -72,8 +72,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ env.app_version }}
-          release_name: ${{ env.app_version }}
+          tag_name: v${{ env.project_version }}
+          release_name: ${{ env.project_version }}
           body: "Ref: ${{ github.ref }} SHA: ${{ github.sha }}"
           draft: true
           prerelease: false
