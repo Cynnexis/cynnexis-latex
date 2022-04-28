@@ -1,4 +1,9 @@
 #!/bin/bash
+set -euo pipefail
+
+get_texlive_install_folder() {
+	find /usr/local/texlive/ -maxdepth 1 -type d | grep -Pe '\d{4,}' | sort | tail -n1 | xargs readlink -f
+}
 
 echo "Installing TeX Live..."
 CACHE_DIR="/tmp/texlive-cache/$(date +'%Y')"
@@ -30,20 +35,28 @@ else
 		echo "Installing TeX Live through the CTAN mirror \"$CTAN_MIRROR\"..."
 		INSTALLATION_ARGS="$INSTALLATION_ARGS --location=$CTAN_MIRROR"
 	fi
-	yes i | perl install-tl $INSTALLATION_ARGS
+	set +eo pipefail
+	yes i | perl install-tl "$INSTALLATION_ARGS"
 	exit_code=$?
+	texlive_installation_folder=$(get_texlive_install_folder)
 	if [[ $exit_code -ne 0 ]]; then
 		echo "The installation of TeX Live failed. Error code: $exit_code"
+		if [[ -r "$texlive_installation_folder/install-tl.log" ]]; then
+			echo "$texlive_installation_folder/install-tl.log:"
+			cat "$texlive_installation_folder/install-tl.log"
+		fi
 		exit $exit_code
 	fi
+	set -eo pipefail
 	cd ~
 	rm -rf /tmp/install-latex/*
 fi
 
 rm -f /tmp/texlive.profile
-rm -f /usr/local/texlive/2020/install-tl.log
+rm -f "$texlive_installation_folder/install-tl.log"
 
-echo "PATH=/usr/local/texlive/2020/bin/x86_64-linux:$PATH" >> ~/.bashrc
-export PATH="/usr/local/texlive/2020/bin/x86_64-linux:$PATH"
+texlive_installation_folder=$(get_texlive_install_folder)
+echo "PATH=$texlive_installation_folder/bin/x86_64-linux:$PATH" >> ~/.bashrc
+export PATH="$texlive_installation_folder/bin/x86_64-linux:$PATH"
 echo "TeX Live has been successfully installed at $(which tlmgr) with version:"
 tlmgr --version
