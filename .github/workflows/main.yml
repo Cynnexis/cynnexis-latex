@@ -49,6 +49,9 @@ jobs:
         with:
           tags: cynnexis/latex:latest,cynnexis/latex:${{ env.project_version }}
           push: true
+          context: .
+          build-args:
+            - PROJECT_VERSION="${{ env.project_version }}"
       - name: Inspect built image
         run: |
           echo "Image ID:              ${{ steps.build_push.outputs.imageid }}"
