@@ -29,7 +29,7 @@ else
 		INSTALLATION_ARGS="--profile=/tmp/texlive.profile"
 	fi
 
-	if [[ -z $CTAN_MIRROR ]]; then
+	if [[ ! -v CTAN_MIRROR || -z $CTAN_MIRROR ]]; then
 		echo "Installing TeX Live..."
 	else
 		echo "Installing TeX Live through the CTAN mirror \"$CTAN_MIRROR\"..."
