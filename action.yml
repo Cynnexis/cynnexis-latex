@@ -1,0 +1,29 @@
+name: LaTeX Toolchain
+author: Cynnexis
+description: GitHub Action using the Docker image cynnexis/latex, that contains latex executables & fonts packages, based on the ubuntu image.
+
+inputs:
+  engine:
+    description: The engine to use, like pdflatex, lualatex, xetex, etc. Defaults to pdflatex.
+    required: false
+    default: pdflatex
+  file:
+    description: The TeX file to build into a PDF.
+    required: true
+
+runs:
+  using: docker
+  image: Dockerfile
+  args:
+    - ${{ inputs.engine }}
+    - -shell-escape
+    - -interaction=batchmode
+    - -halt-on-error
+    - -file-line-error
+    - -output-directory
+    - '.'
+    - ${{ inputs.file }}
+
+branding:
+  icon: file-text
+  color: green

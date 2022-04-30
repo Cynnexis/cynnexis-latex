@@ -5,7 +5,7 @@
 [![total release download](https://img.shields.io/github/downloads/Cynnexis/cynnexis-latex/total)][project-release]
 [![license](https://img.shields.io/github/license/Cynnexis/cynnexis-latex)](LICENSE)
 
-Docker image containing latex & fonts apt packages, based on the [ubuntu image](https://hub.docker.com/_/ubuntu).
+Docker image containing latex & fonts packages, based on the [ubuntu image](https://hub.docker.com/_/ubuntu).
 
 [![Github repo](https://img.shields.io/badge/GitHub%20repo-100000?style=for-the-badge&logo=github&logoColor=white)][github-link]
 

@@ -8,6 +8,24 @@ on:
   pull_request:
 
 jobs:
+  test-gh-action:
+    runs-on: ubuntu-20.04
+    name: Test the GitHub Action Cynnexis/cynnexis-latex
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Use Cynnexis/cynnexis-latex
+        uses: ./
+        with:
+          engine: pdflatex
+          file: test/document.tex
+      - name: Check the results
+        run: |
+          # TODO: DEBUG
+          ls -lha .
+          ls -lha test/
+          [[ -f document.pdf || -f test/document.pdf ]]
+
   build:
     runs-on: ubuntu-20.04
     name: Build the Docker image and send it to Docker Hub
@@ -40,14 +58,25 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build and push Docker image to Docker Hub
         id: build_push
         uses: docker/build-push-action@v2
         with:
-          tags: cynnexis/latex:latest,cynnexis/latex:${{ env.project_version }}
-          push: true
+          tags: |
+            cynnexis/latex:latest
+            cynnexis/latex:${{ env.project_version }}
+          push: ${{ github.event_name == 'pull_request' && github.base_ref == 'master' || contains(github.ref, 'cicd/') }}
+          load: true
           context: .
           build-args: PROJECT_VERSION="${{ env.project_version }}"
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
       - name: Inspect built image
         run: |
           echo "Image ID:              ${{ steps.build_push.outputs.imageid }}"
@@ -55,11 +84,21 @@ jobs:
           echo "Build result metadata: ${{ steps.build_push.outputs.metadata }}"
       - name: Test the Docker image
         run: make test
+      # Copy image from Docker Hub to ghcr after tests (source: https://github.com/docker/build-push-action/blob/master/docs/advanced/copy-between-registries.md)
+      - name: Push image to multiple registries
+        uses: akhilerm/tag-push-action@v2.0.0
+        with:
+          src: docker.io/cynnexis/latex:${{ env.project_version }}
+          dst: |
+            ghcr.io/cynnexis/latex:latest
+            ghcr.io/cynnexis/latex:${{ env.project_version }}
 
   release:
     runs-on: ubuntu-20.04
     name: Create a release
-    needs: [build]
+    needs:
+      - test-gh-action
+      - build
     steps:
       - name: Checkout
         uses: actions/checkout@v2
