@@ -11,6 +11,7 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     name: Build the Docker image and send it to Docker Hub
+    timeout-minutes: 120
     steps:
       # Setup
       - name: Checkout
@@ -49,8 +50,8 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       # Build
-      - name: Build and push Docker image to Docker Hub
-        id: build_push
+      - name: Build image
+        id: build_image
         uses: docker/build-push-action@v2
         with:
           tags: |
@@ -63,9 +64,9 @@ jobs:
           cache-to: type=gha,mode=max
       - name: Inspect built image
         run: |
-          echo "Image ID:              ${{ steps.build_push.outputs.imageid }}"
-          echo "Image digest:          ${{ steps.build_push.outputs.digest }}"
-          echo "Build result metadata: ${{ steps.build_push.outputs.metadata }}"
+          echo "Image ID:              ${{ steps.build_image.outputs.imageid }}"
+          echo "Image digest:          ${{ steps.build_image.outputs.digest }}"
+          echo "Build result metadata: ${{ steps.build_image.outputs.metadata }}"
 
       # Test built image
       - name: Test the Docker image
@@ -90,6 +91,7 @@ jobs:
     name: Test the GitHub Action Cynnexis/cynnexis-latex
     needs:
       - build
+    timeout-minutes: 120
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -113,6 +115,7 @@ jobs:
   release:
     runs-on: ubuntu-20.04
     name: Create a release
+    timeout-minutes: 5
     needs:
       - test-gh-action
       - build
