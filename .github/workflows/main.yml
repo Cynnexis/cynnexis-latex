@@ -15,10 +15,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Prepare files for production
-        run: |
-          sudo apt-get update
-          sudo apt-get install -qqy make
-          DEBUG=false make --no-print-directory texlive.profile
+        run: DEBUG=false make --no-print-directory texlive.profile
       - name: Get the project version
         run: |
           project_version=$(cat VERSION)

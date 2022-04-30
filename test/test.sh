@@ -6,6 +6,9 @@ function clear_test() {
 	rm -rf _minted-*/
 }
 
+# Trap exit signal to clear test
+trap 'clear_test' EXIT
+
 if [[ ! -f "document.tex" ]]; then
 	echo "Error: The LaTeX file doesn't exist." 1>&2
 	exit 1
@@ -22,9 +25,25 @@ fi
 
 DOCKER_IMAGE="cynnexis/latex"
 echo "Compiling the LaTeX file using the Docker image \"$DOCKER_IMAGE\"..."
-docker run --rm --name compile-latex-document -v "$(pwd):/root/latex" "$DOCKER_IMAGE:latest" pdflatex -shell-escape -halt-on-error -file-line-error -output-directory "/root/latex/" "/root/latex/document.tex"
+mkdir -p build
+
+PS4='$ '
+set -x
+time docker run \
+	-i \
+	--rm \
+	--name compile-latex-document \
+	-v "$(pwd):/root/latex" \
+	--entrypoint=bash \
+	"$DOCKER_IMAGE:latest" \
+		-c 'time pdflatex -shell-escape -halt-on-error -file-line-error -output-directory "/root/latex/" "/root/latex/document.tex"' \
+	|& tee build/test.log
+
+{ set +x; } 2> /dev/null
+
 echo "Compilation done."
 
+# Check the document exists
 if [[ ! -f "document.pdf" ]]; then
 	echo "Error: No PDF file were produced." 1>&2
 	if [[ -f "document.log" ]]; then
@@ -41,5 +60,9 @@ if [[ ( ! $file_size =~ $re_number ) || $file_size -eq 0 ]]; then
 	echo "Error: The document is not valid. Its size is $file_size B." 1>&2
 fi
 
+# Clear tests
 clear_test
+# Reset exit Trap
+trap - EXIT
+
 echo "Tests passed."

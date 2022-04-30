@@ -12,6 +12,7 @@ if [[ -d $CACHE_DIR ]]; then
 	echo "Using cache \"$CACHE_DIR\"."
 	mv "$CACHE_DIR" /usr/local/texlive/
 	rm -rf /tmp/texlive-cache
+	texlive_installation_folder=$(get_texlive_install_folder)
 else
 	mkdir -p /tmp/install-latex/
 	cd /tmp/install-latex/
@@ -52,11 +53,17 @@ else
 	rm -rf /tmp/install-latex/*
 fi
 
+# Get the texlive installation folder (if not defined)
+if [[ ! -v texlive_installation_folder || -z $texlive_installation_folder ]]; then
+	texlive_installation_folder=$(get_texlive_install_folder)
+fi
+
 rm -f /tmp/texlive.profile
 rm -f "$texlive_installation_folder/install-tl.log"
 
-texlive_installation_folder=$(get_texlive_install_folder)
-echo "PATH=$texlive_installation_folder/bin/x86_64-linux:$PATH" >> ~/.bashrc
-export PATH="$texlive_installation_folder/bin/x86_64-linux:$PATH"
+# Export executables to directory in PATH (as symbolic links)
+bin_dir=/usr/local/bin
+find -L "$texlive_installation_folder/bin/x86_64-linux" -maxdepth 1 -type f -executable -exec ln -st "$bin_dir/" "{}" +
+
 echo "TeX Live has been successfully installed at $(which tlmgr) with version:"
 tlmgr --version

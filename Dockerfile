@@ -45,8 +45,8 @@ ARG DEBUG
 USER root
 SHELL ["/bin/bash", "-c"]
 ARG DEBIAN_FRONTEND=noninteractive
-ARG TERM=xterm
-ENV OSFONTDIR="/usr/share/fonts:/usr/local/share/fonts:/root/.fonts"
+ENV OSFONTDIR="/usr/share/fonts:/usr/local/share/fonts:/root/.fonts" \
+	TERM=xterm
 
 COPY install-texlive.sh texlive.profile /tmp/
 
@@ -119,6 +119,3 @@ RUN \
 	fi && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/*
-
-# A shell is needed in order to have the correct PATH
-ENTRYPOINT [ "bash", "-c" ]
