@@ -3,7 +3,7 @@ name: cynnexis/latex CI/CD
 on:
   push:
     branches:
-      - master
+      - main
       - 'cicd/**'
   pull_request:
 
@@ -15,7 +15,7 @@ jobs:
     steps:
       # Setup
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Prepare files for production
         run: DEBUG=false make --no-print-directory texlive.profile
       - name: Get the project version
@@ -74,10 +74,10 @@ jobs:
 
       # Push images
       - name: Push image to Docker registry
-        if: github.event_name == 'pull_request' && github.base_ref == 'master' || contains(github.ref, 'cicd/')
+        if: github.event_name == 'pull_request' && github.base_ref == 'main' || contains(github.ref, 'cicd/')
         run: docker push --all-tags cynnexis/latex
       - name: Push image to multiple registries
-        if: github.event_name == 'pull_request' && github.base_ref == 'master' || contains(github.ref, 'cicd/')
+        if: github.event_name == 'pull_request' && github.base_ref == 'main' || contains(github.ref, 'cicd/')
         # Copy image from Docker Hub to ghcr after tests (source: https://github.com/docker/build-push-action/blob/master/docs/advanced/copy-between-registries.md)
         uses: akhilerm/tag-push-action@v2.0.0
         with:
@@ -94,7 +94,7 @@ jobs:
     timeout-minutes: 180
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Use Cynnexis/cynnexis-latex
         uses: ./
         with:
@@ -113,7 +113,7 @@ jobs:
       - build
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Get the project version
         run: |
           project_version=$(cat VERSION)
