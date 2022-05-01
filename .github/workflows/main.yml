@@ -95,14 +95,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Get the project version
-        run: |
-          project_version=$(cat VERSION)
-          echo "project_version=$project_version" >> $GITHUB_ENV
       - name: Use Cynnexis/cynnexis-latex
         uses: ./
         with:
-          tag: ${{ env.project_version }}
           engine: pdflatex
           file: test/document.tex
       - name: Check the results
