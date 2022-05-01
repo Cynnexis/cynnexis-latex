@@ -15,7 +15,7 @@ jobs:
     steps:
       # Setup
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Prepare files for production
         run: DEBUG=false make --no-print-directory texlive.profile
       - name: Get the project version
@@ -94,7 +94,7 @@ jobs:
     timeout-minutes: 180
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Use Cynnexis/cynnexis-latex
         uses: ./
         with:
@@ -113,7 +113,7 @@ jobs:
       - build
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Get the project version
         run: |
           project_version=$(cat VERSION)
