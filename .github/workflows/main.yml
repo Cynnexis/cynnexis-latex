@@ -102,10 +102,7 @@ jobs:
           file: test/document.tex
       - name: Check the results
         run: |
-          # TODO: DEBUG
-          ls -lha .
-          ls -lha test/
-          [[ -f document.pdf || -f test/document.pdf ]]
+          [[ -f document.pdf ]]
 
   release:
     runs-on: ubuntu-20.04
