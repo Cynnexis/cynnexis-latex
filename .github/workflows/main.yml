@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-20.04
     name: Build the Docker image and send it to Docker Hub
-    timeout-minutes: ${{ env.BUILD_TIMEOUT }}
+    timeout-minutes: $BUILD_TIMEOUT
     steps:
       # Setup
       - name: Checkout
@@ -94,7 +94,7 @@ jobs:
     name: Test the GitHub Action Cynnexis/cynnexis-latex
     needs:
       - build
-    timeout-minutes: ${{ env.BUILD_TIMEOUT }}
+    timeout-minutes: $BUILD_TIMEOUT
     steps:
       - name: Checkout
         uses: actions/checkout@v2
