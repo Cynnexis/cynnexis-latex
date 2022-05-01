@@ -7,11 +7,14 @@ on:
       - 'cicd/**'
   pull_request:
 
+env:
+  BUILD_TIMEOUT: 180
+
 jobs:
   build:
     runs-on: ubuntu-20.04
     name: Build the Docker image and send it to Docker Hub
-    timeout-minutes: 120
+    timeout-minutes: ${{ env.BUILD_TIMEOUT }}
     steps:
       # Setup
       - name: Checkout
@@ -91,7 +94,7 @@ jobs:
     name: Test the GitHub Action Cynnexis/cynnexis-latex
     needs:
       - build
-    timeout-minutes: 120
+    timeout-minutes: ${{ env.BUILD_TIMEOUT }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -102,7 +105,7 @@ jobs:
       - name: Use Cynnexis/cynnexis-latex
         uses: ./
         with:
-          version: ${{ env.project_version }}
+          tag: ${{ env.project_version }}
           engine: pdflatex
           file: test/document.tex
       - name: Check the results

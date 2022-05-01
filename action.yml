@@ -3,7 +3,7 @@ author: Cynnexis
 description: GitHub Action using the Docker image cynnexis/latex, that contains latex executables & fonts packages, based on the ubuntu image.
 
 inputs:
-  version:
+  tag:
     description: The tag version of the cynnexis/latex. Defaults to latest.
     required: false
     default: latest
@@ -17,7 +17,7 @@ inputs:
 
 runs:
   using: docker
-  image: cynnexis/latex:${{ inputs.version }}
+  image: cynnexis/latex:${{ inputs.tag }}
   args:
     - ${{ inputs.engine }}
     - -shell-escape
