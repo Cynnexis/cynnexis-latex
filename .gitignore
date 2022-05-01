@@ -17,9 +17,12 @@
 
 # End of https://www.gitignore.io/api/dotenv,visualstudiocode
 
+build/
 cache/
 cache.ignore/
 *.code-workspace
 texlive-cache/
 find-best-CTAN-mirror?.sh
-./texlive.profile
+texlive.profile
+GIT.md
+*.log

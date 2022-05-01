@@ -9,38 +9,123 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     name: Build the Docker image and send it to Docker Hub
-    if: github.event_name == 'pull_request' && github.base_ref == 'master' || contains(github.ref, 'cicd/')
+    timeout-minutes: 180
     steps:
+      # Setup
       - name: Checkout
         uses: actions/checkout@v2
       - name: Prepare files for production
-        run: cp config/texlive.prod.profile texlive.profile
-      - name: Build and push Docker image to Docker Hub
-        uses: docker/build-push-action@v1
+        run: DEBUG=false make --no-print-directory texlive.profile
+      - name: Get the project version
+        run: |
+          project_version=$(cat VERSION)
+          echo "project_version=$project_version" >> $GITHUB_ENV
+      - name: Set up QEMU
+        id: qemu
+        uses: docker/setup-qemu-action@v1
         with:
-          repository: cynnexis/latex
+          platforms: all
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Inspect builder
+        run: |
+          echo "Name:      ${{ steps.buildx.outputs.name }}"
+          echo "Endpoint:  ${{ steps.buildx.outputs.endpoint }}"
+          echo "Status:    ${{ steps.buildx.outputs.status }}"
+          echo "Flags:     ${{ steps.buildx.outputs.flags }}"
+          echo "Platforms: ${{ steps.buildx.outputs.platforms }}"
+      - name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          tags: latest
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Build
+      - name: Build image
+        id: build_image
+        uses: docker/build-push-action@v2
+        with:
+          tags: |
+            cynnexis/latex:latest
+            cynnexis/latex:${{ env.project_version }}
+          load: true
+          context: .
+          build-args: PROJECT_VERSION="${{ env.project_version }}"
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+      - name: Inspect built image
+        run: |
+          echo "Image ID:              ${{ steps.build_image.outputs.imageid }}"
+          echo "Image digest:          ${{ steps.build_image.outputs.digest }}"
+          echo "Build result metadata: ${{ steps.build_image.outputs.metadata }}"
+
+      # Test built image
       - name: Test the Docker image
         run: make test
-  
-  release:
-    runs-on: ubuntu-18.04
-    name: Create a release
-    needs: build
-    if: github.event_name == 'pull_request' && github.base_ref == 'master' || github.event_name == 'push' && contains(github.ref, 'master') || contains(github.ref, 'cicd/')
+
+      # Push images
+      - name: Push image to Docker registry
+        if: github.event_name == 'pull_request' && github.base_ref == 'master' || contains(github.ref, 'cicd/')
+        run: docker push --all-tags cynnexis/latex
+      - name: Push image to multiple registries
+        if: github.event_name == 'pull_request' && github.base_ref == 'master' || contains(github.ref, 'cicd/')
+        # Copy image from Docker Hub to ghcr after tests (source: https://github.com/docker/build-push-action/blob/master/docs/advanced/copy-between-registries.md)
+        uses: akhilerm/tag-push-action@v2.0.0
+        with:
+          src: docker.io/cynnexis/latex:${{ env.project_version }}
+          dst: |
+            ghcr.io/cynnexis/latex:latest
+            ghcr.io/cynnexis/latex:${{ env.project_version }}
+
+  test-gh-action:
+    runs-on: ubuntu-20.04
+    name: Test the GitHub Action Cynnexis/cynnexis-latex
+    needs:
+      - build
+    timeout-minutes: 180
     steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Use Cynnexis/cynnexis-latex
+        uses: ./
+        with:
+          engine: pdflatex
+          file: test/document.tex
+      - name: Check the results
+        run: |
+          [[ -f document.pdf ]]
+
+  release:
+    runs-on: ubuntu-20.04
+    name: Create a release
+    timeout-minutes: 5
+    needs:
+      - test-gh-action
+      - build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Get the project version
+        run: |
+          project_version=$(cat VERSION)
+          echo "project_version=$project_version" >> $GITHUB_ENV
       - name: Create a release for the Docker image
         id: create_release
         uses: actions/create-release@latest
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.sha }}
-          release_name: ${{ github.sha }}
+          tag_name: v${{ env.project_version }}
+          release_name: ${{ env.project_version }}
           body: "Ref: ${{ github.ref }} SHA: ${{ github.sha }}"
           draft: true
           prerelease: false
