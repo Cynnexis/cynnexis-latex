@@ -9,7 +9,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     name: Build the Docker image and send it to Docker Hub
     timeout-minutes: 180
     permissions:
@@ -27,12 +27,12 @@ jobs:
           echo "project_version=$project_version" >> $GITHUB_ENV
       - name: Set up QEMU
         id: qemu
-        uses: docker/setup-qemu-action@v1
+        uses: docker/setup-qemu-action@v2
         with:
           platforms: all
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
       - name: Inspect builder
         run: |
           echo "Name:      ${{ steps.buildx.outputs.name }}"
@@ -41,12 +41,12 @@ jobs:
           echo "Flags:     ${{ steps.buildx.outputs.flags }}"
           echo "Platforms: ${{ steps.buildx.outputs.platforms }}"
       - name: Login to DockerHub
-        uses: docker/login-action@v1 
+        uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v1
+        uses: docker/login-action@v2
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -55,7 +55,7 @@ jobs:
       # Build
       - name: Build image
         id: build_image
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v4
         with:
           tags: |
             cynnexis/latex:latest
@@ -80,7 +80,7 @@ jobs:
         # Snyk can be used to break the build when it detects vulnerabilities.
         # In this case we want to upload the issues to GitHub Code Scanning
         continue-on-error: true
-        uses: snyk/actions/docker@14818c4695ecc4045f33c9cee9e795a788711ca4
+        uses: snyk/actions/docker@806182742461562b67788a64410098c9d9b96adb
         env:
           # In order to use the Snyk Action you will need to have a Snyk API token.
           # More details in https://github.com/snyk/actions#getting-your-snyk-token
@@ -121,7 +121,7 @@ jobs:
             ghcr.io/cynnexis/latex:${{ env.project_version }}
 
   test-gh-action:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     name: Test the GitHub Action Cynnexis/cynnexis-latex
     needs:
       - build
@@ -139,7 +139,7 @@ jobs:
           [[ -f document.pdf ]]
 
   release:
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     name: Create a release
     timeout-minutes: 5
     needs:
