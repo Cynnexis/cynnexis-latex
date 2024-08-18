@@ -6,6 +6,8 @@ on:
       - main
       - 'cicd/**'
   pull_request:
+    branches:
+      - main
 
 jobs:
   build:
@@ -26,8 +28,19 @@ jobs:
 
       - name: Get the project version
         run: |
-          project_version=$(cat VERSION)
-          echo "project_version=$project_version" >> $GITHUB_ENV
+          base_image=ubuntu
+          base_tag=20.04
+          echo "base_image=$base_image" >> "$GITHUB_ENV"
+          echo "base_tag=$base_tag" >> "$GITHUB_ENV"
+          echo "create_date=$(date -u +%FT%T%z)" >> "$GITHUB_ENV"
+
+          echo "Pull Docker image"
+          docker pull "$base_image:$base_tag"
+          base_digest="$(docker images -q "$base_image:$base_tag")"
+          echo "base_digest=$base_digest" >> "$GITHUB_ENV"
+
+          project_version=$(cat VERSION | head -n1 | tr -d '\n' | xargs)
+          echo "project_version=$project_version" >> "$GITHUB_ENV"
 
       - name: Set up QEMU
         id: qemu
@@ -70,7 +83,12 @@ jobs:
             cynnexis/latex:${{ env.project_version }}
           load: true
           context: .
-          build-args: PROJECT_VERSION="${{ env.project_version }}"
+          build-args: |
+            BASE_IMAGE="${{ env.base_image }}"
+            BASE_TAG="${{ env.base_tag }}"
+            CREATE_DATE="${{ env.create_date }}"
+            BASE_DIGEST="${{ env.base_digest }}"
+            PROJECT_VERSION="${{ env.project_version }}"
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

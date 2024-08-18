@@ -49,10 +49,17 @@ build/build.log: Dockerfile install-texlive.sh texlive.profile VERSION
 	# Create the build directory
 	mkdir -p build
 
+	# Get base image and its hash
+	base_image=ubuntu
+	base_tag=20.04
+	echo "Pull Docker image"
+	docker pull "$$base_image:$$base_tag"
+	base_digest="$$(docker images -q "$$base_image:$$base_tag")"
+
 	# Get project version
 	PROJECT_VERSION="$$($(MAKE) --no-print-directory short-version)"
 
-	time docker build -t "$(DOCKER_IMAGE):latest" -f "$<" . --build-arg=PROJECT_VERSION="$$PROJECT_VERSION" --build-arg APT_UBUNTU_MIRROR --build-arg CTAN_MIRROR --build-arg DEBUG="$(DEBUG)" --progress=plain |& tee "$@"
+	time docker build -t "$(DOCKER_IMAGE):latest" -f "$<" . --build-arg=CREATE_DATE="$$(date -u +%FT%T%z)" --build-arg=BASE_DIGEST="$$base_digest" --build-arg=PROJECT_VERSION="$$PROJECT_VERSION" --build-arg APT_UBUNTU_MIRROR --build-arg CTAN_MIRROR --build-arg DEBUG="$(DEBUG)" --progress=plain |& tee "$@"
 
 	# Remove TeXLive profile (and reset trap)
 	rm texlive.profile
