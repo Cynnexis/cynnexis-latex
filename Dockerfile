@@ -20,17 +20,38 @@
 # * DEBIAN_FRONTEND: Optional argument, defaults to "noninteractive".
 # * TERM: Optional argument. The term environment variable, defaults to "xterm".
 
-FROM ubuntu:20.04
+# The base image name, it should be a Debian-based distribution.
+ARG BASE_IMAGE="ubuntu"
+
+# The tag of the image.
+ARG BASE_TAG="20.04"
+
+FROM ${BASE_IMAGE}:${BASE_TAG}
+
+# Inherit arguments from global scope
+ARG BASE_IMAGE
+ARG BASE_TAG
+
+# The creation date of this image, conforming to RFC 3339: YYYY-MM-DDThh:mm:ssZ
+ARG CREATE_DATE
+
+ARG BASE_DIGEST
 
 # The project version. It should be the content of the "VERSION" file, without
 # line breaks, nor trailing whitespaces.
 ARG PROJECT_VERSION
 
-# Define label
-LABEL name="cynnexis-latex"
-LABEL description="This Dockerfile contains a LaTeX environment to compile TeX documents."
-LABEL version="$PROJECT_VERSION"
-LABEL maintainer="Valentin Berger"
+# Define labels
+LABEL org.opencontainers.image.title="cynnexis-latex"
+LABEL org.opencontainers.image.description="Docker image containing latex & fonts packages, based on the ubuntu image."
+LABEL org.opencontainers.image.base.name="${BASE_IMAGE}:${BASE_TAG}"
+LABEL org.opencontainers.image.base.digest="${BASE_DIGEST}"
+LABEL org.opencontainers.image.version="$PROJECT_VERSION"
+LABEL org.opencontainers.image.authors="Valentin Berger"
+LABEL org.opencontainers.image.url="https://github.com/Cynnexis/cynnexis-latex"
+LABEL org.opencontainers.image.documentation="https://github.com/Cynnexis/cynnexis-latex"
+LABEL org.opencontainers.image.source="https://github.com/Cynnexis/cynnexis-latex"
+LABEL org.opencontainers.image.created="${CREATE_DATE}"
 
 # Arguments to use an APT mirror instead of default Ubuntu servers. Please make
 # sure that the given value starts with the protocol (http://, https://,

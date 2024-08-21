@@ -1,3 +1,7 @@
+# 1.0.2 - May 19, 2024
+
+* Update dependencies.
+
 # 1.0.1 - May 1, 2020
 
 * Optimized Docker image.
