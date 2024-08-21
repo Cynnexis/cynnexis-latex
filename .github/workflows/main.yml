@@ -84,11 +84,11 @@ jobs:
           load: true
           context: .
           build-args: |
-            BASE_IMAGE="${{ env.base_image }}"
-            BASE_TAG="${{ env.base_tag }}"
-            CREATE_DATE="${{ env.create_date }}"
-            BASE_DIGEST="${{ env.base_digest }}"
-            PROJECT_VERSION="${{ env.project_version }}"
+            BASE_IMAGE=${{ env.base_image }}
+            BASE_TAG=${{ env.base_tag }}
+            CREATE_DATE=${{ env.create_date }}
+            BASE_DIGEST=${{ env.base_digest }}
+            PROJECT_VERSION=${{ env.project_version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
